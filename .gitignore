@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ### Example user template template
 ### Example user template
 
@@ -35,11 +36,16 @@ Temporary Items
 .apdisk
 
 ### Python template
+=======
+>>>>>>> cf8cce2 (Initial commit)
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+<<<<<<< HEAD
 *.pyc
+=======
+>>>>>>> cf8cce2 (Initial commit)
 
 # C extensions
 *.so
@@ -58,6 +64,10 @@ parts/
 sdist/
 var/
 wheels/
+<<<<<<< HEAD
+=======
+pip-wheel-metadata/
+>>>>>>> cf8cce2 (Initial commit)
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -87,7 +97,10 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+<<<<<<< HEAD
 cover/
+=======
+>>>>>>> cf8cce2 (Initial commit)
 
 # Translations
 *.mo
@@ -110,8 +123,10 @@ instance/
 docs/_build/
 
 # PyBuilder
+<<<<<<< HEAD
 .pybuilder/
 
+target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -124,6 +139,7 @@ ipython_config.py
 #   For a library or package, you might want to ignore these files since the code is
 #   intended to run in multiple environments; otherwise, check them in:
 # .python-version
+.python-version
 
 # pipenv
 #   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
