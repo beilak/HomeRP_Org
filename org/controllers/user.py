@@ -40,9 +40,7 @@ class UserRepository:
             statement = select(User).offset(offset).limit(limit)
             if login is not None:
                 statement.filter(User.login.in_(login))
-                result = await session.execute(statement)
-            else:
-                result = await session.execute(statement)
+            result = await session.execute(statement)
             return result.all()
 
     async def is_user_exist(self, login) -> bool:

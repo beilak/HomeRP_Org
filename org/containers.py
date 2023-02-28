@@ -1,7 +1,7 @@
 from dependency_injector import containers
 from dependency_injector.providers import Configuration, Singleton, Factory
 from pydantic.env_settings import BaseSettings
-from org.controllers import UserRepository, UserService, UnitFactory
+from org.controllers import UserRepository, UserService, UnitService, UnitRepository
 from org.db.db_conn import DBEngineProvider, ORGDatabase
 
 
@@ -26,19 +26,24 @@ class OrgContainer(containers.DeclarativeContainer):
         engine_provider=_db_engine,
     )
 
-    user_repository: Factory[UserRepository] = Factory(
+    _user_repository: Factory[UserRepository] = Factory(
         UserRepository,
         db_session=_org_db.provided.new_session,
     )
 
     user_service: Factory[UserService] = Factory(
         UserService,
-        repository=user_repository,
+        repository=_user_repository,
     )
 
-    unit_factory: Singleton[UnitFactory] = Singleton(
-        UnitFactory,
-        db_session=_org_db.provided.session_factory,
+    _unit_repository: Factory[UnitRepository] = Factory(
+        UnitRepository,
+        db_session=_org_db.provided.new_session,
+    )
+
+    unit_service: Factory[UnitService] = Factory(
+        UnitService,
+        repository=_unit_repository,
     )
 
     @staticmethod
