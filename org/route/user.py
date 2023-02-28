@@ -3,17 +3,16 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import List
 from dependency_injector.wiring import inject, Provide
-from ..containers import OrgContainer
-from ..models.user import UserResponseModel, UserRequestModel
-#from ..models import UnitResponseModel, UserUnitResponseModel, UserUnitRequestModel
-from ..controllers import UserService #, UnitFactory
+from org.containers import OrgContainer
+from org.models.user import UserResponseModel, UserRequestModel
+from org.controllers import UserService
 
 
 user_router: APIRouter = APIRouter()
 
 
 @user_router.get(
-    "/users/",
+    "/user",
     status_code=status.HTTP_200_OK,
     response_model=List[UserResponseModel],
 )
@@ -32,9 +31,10 @@ async def get_users(
 
 
 @user_router.get(
-    "/users/{login}",
+    "/user/{login}",
     status_code=status.HTTP_200_OK,
-    response_model=UserResponseModel)
+    response_model=UserResponseModel
+)
 @inject
 async def get_user(
         login: str,
@@ -46,9 +46,11 @@ async def get_user(
 
 
 @user_router.post(
-    "/users/",
+    "/user",
+    description="register new user ",
     status_code=status.HTTP_201_CREATED,
-    response_model=UserResponseModel)
+    response_model=UserResponseModel
+)
 @inject
 async def create_user(
         user: UserRequestModel,

@@ -2,45 +2,85 @@ import os
 
 from sqlalchemy.sql import exists
 
-#from ..db.db_conn import DBConn
-from ..db_schemas.db_unit import Unit
-from ..models import UnitRequestModel
-from .error import UnitExist
+#from org.db.db_conn import DBConn
+from org.db_schemas.db_unit import Unit
+from org.models import UnitRequestModel
+from org.controllers.error import UnitExist, UnitNotFoundError
+from sqlalchemy import select
 
 
-class UnitFactory:
+class UnitRepository:
 
-    @classmethod
-    async def create(cls, unit_in: UnitRequestModel):
-        unit_id = unit_in.unit_id
-        if cls.is_unit_exist(unit_id) is True:
-            raise UnitExist(unit_id)
+    def __init__(self, db_session) -> None:
+        """Init."""
+        self._db_session = db_session
 
-        if unit_in.join_pass is None:
-            unit_in.join_pass = os.urandom()
-        unit = Unit(**unit_in.__dict__)
-        DBConn.insert((unit,))
-        unit = cls.get_unit(unit_id)
+    async def add(self, unit: Unit):
+        async with self._db_session() as session:
+            session.add(unit)
+            await session.commit()
+            await session.refresh(unit)
         return unit
 
-    @classmethod
-    async def is_unit_exist(cls, unit_id):
-        with DBConn.get_new_session() as session:
-            return session.query(exists().where(Unit.unit_id == unit_id)).scalar()
+    async def is_unit_exist(self, unit_id):
+        try:
+            unit = await self.get_unit(unit_id)
+            if unit:
+                return True
+        except UnitNotFoundError:
+            return False
+        return False
 
-    @classmethod
-    async def get_unit(cls, unit_id):
-        with DBConn.get_new_session() as session:
-            return session.query(Unit).filter(Unit.unit_id == unit_id).one()
+    async def get_unit(self, unit_id):
+        # with DBConn.get_new_session() as session:
+        #     return session.query(Unit).filter(Unit.unit_id == unit_id).one()
+        #
+        async with self._db_session() as session:
+            units = await session.execute(select(Unit).filter(Unit.unit_id == unit_id))
+            unit = units.fetchone()
+            if not unit:
+                raise UnitNotFoundError(unit_id)
+            else:
+                return unit[0]
 
-    @classmethod
-    async def get_units(cls, offset=0, limit=100):
-        with DBConn.get_new_session() as session:
-            query = session.query(Unit).offset(offset).limit(limit)
-            return query.all()
+    async def get_units(self, offset=0, limit=100):
+        async with self._db_session() as session:
+            statement = select(Unit).offset(offset).limit(limit)
+            result = await session.execute(statement)
+            return result.all()
 
-    @classmethod
-    async def delete_unit(cls, unit):
-        with DBConn.get_new_session() as session:
-            session.query(Unit).filter(Unit.unit_id == unit.unit_id).delete()
-            session.commit()
+    # @classmethod
+    # async def delete_unit(cls, unit):
+    #     with DBConn.get_new_session() as session:
+    #         session.query(Unit).filter(Unit.unit_id == unit.unit_id).delete()
+    #         session.commit()
+
+
+class UnitService:
+    """User Service"""
+
+    def __init__(self, repository: UnitRepository) -> None:
+        """Init."""
+        self._repository = repository
+
+    async def create(self, cr_unit: UnitRequestModel) -> Unit:
+        """Create user"""
+        if await self._repository.is_unit_exist(cr_unit.unit_id) is True:
+            raise UnitExist(cr_unit.unit_id)
+        return await self._repository.add(Unit(**cr_unit.dict()))
+
+    async def get_units(self, offset=0, limit=100):
+        """Read user's detail"""
+        result = await self._repository.get_units(offset=offset, limit=limit)
+        users = []
+        for user in result:
+            users.append(user[0])
+        return users
+
+    async def get_unit(self, unit_id):
+        """Read unit detail"""
+        return await self._repository.get_unit(unit_id=unit_id)
+
+    # async def delete_user(self, login):
+    #     """Delete user"""
+    #     await self._repository.delete_user(login)
