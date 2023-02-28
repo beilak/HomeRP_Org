@@ -97,7 +97,6 @@ class UserService:
             users.append(user[0])
         return users
 
-
     async def get_user(self, login):
         """Read user detail"""
         return await self._repository.get_by_login(login=login)

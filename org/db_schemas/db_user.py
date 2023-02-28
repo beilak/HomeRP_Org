@@ -2,8 +2,8 @@ from sqlalchemy import Column, String, DateTime, func
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import PasswordType, EmailType
 
-from ..db.db_conn import Base
-from ..db_schemas.db_unit_user import UnitUser
+from org.db.db_conn import Base
+from org.db_schemas.db_unit_user import UnitUser
 
 
 class User(Base):

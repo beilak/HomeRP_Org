@@ -16,5 +16,7 @@ class Unit(Base):
     join_pass = Column(PasswordType(schemes=['pbkdf2_sha512']))
     cr_date = Column(DateTime(timezone=True), server_default=func.now())
     upd_date = Column(DateTime(timezone=True), onupdate=func.now())
-    users = relationship(User, secondary=UnitUser, uselist=True,
-                         back_populates="units", lazy='joined')
+    # users = relationship(
+    #     User, secondary=UnitUser, uselist=True,
+    #     back_populates="units", lazy='joined'
+    # )

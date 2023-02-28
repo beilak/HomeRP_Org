@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime, Table
 from sqlalchemy.sql import func
+from org.db.db_conn import Base
 
-from ..db.db_conn import Base
 
 UnitUser = Table('unit_user', Base.metadata,
                  Column('unit_id', String(32), ForeignKey('units.unit_id'), primary_key=True),
