@@ -1,18 +1,17 @@
 version: "3.9"
 
 services:
-#  org_db_test:
-#    container_name: org_db_test
-#    image: postgres:15.2
-#    ports:
-#      - "5432:5432"
-#    environment:
-#      - POSTGRES_DB=org_test
-#      - POSTGRES_USER=org_test_user
-#      - POSTGRES_PASSWORD=org_test_pwd
-#    volumes:
-#      - ./.db_volumes/org_test_db:/var/lib/postgresql/data
-##      - ./sql:/docker-entrypoint-initdb.d/:ro
+  org_db_test:
+    container_name: org_db_test
+    image: postgres:15.2
+    ports:
+      - "5000:5432"
+    environment:
+      - POSTGRES_DB=org_test
+      - POSTGRES_USER=org_test_user
+      - POSTGRES_PASSWORD=org_test_pwd
+    volumes:
+      - ./.db_volumes/org_test_db:/var/lib/postgresql/data
 
   keycloak_db:
     container_name: keycloak_db
@@ -25,11 +24,10 @@ services:
       - POSTGRES_PASSWORD=kc_test_pwd
     volumes:
       - ./.db_volumes/kc_test:/var/lib/postgresql/data
-#      - ./sql:/docker-entrypoint-initdb.d/:ro
 
   keycloak:
     container_name: 'keycloak'
-    image: docker.io/bitnami/keycloak:latest    #bitnami/keycloak:latest
+    image: docker.io/bitnami/keycloak:latest
     environment:
       KEYCLOAK_DATABASE_VENDOR: POSTGRES
       KEYCLOAK_DATABASE_HOST: keycloak_db
@@ -47,31 +45,3 @@ services:
     depends_on:
       keycloak_db:
         condition: service_started
-#    command: start-dev
-
-
-#  keycloak:
-#    container_name: 'keycloak'
-#    image: quay.io/keycloak/keycloak:21.0
-#    environment:
-#      DB_VENDOR: POSTGRES
-#      DB_ADDR: keycloak_db
-#      DB_PORT: 5431
-#      DB_DATABASE: kc_test
-##      DB_SCHEMA: keycloak
-#      DB_USER: kc_test_user
-#      DB_PASSWORD: kc_test_pwd
-##      KEYCLOAK_IMPORT: /opt/keycloak/imports/realm-export.json -Dkeycloak.profile.feature.upload_scripts=enabled
-#      KEYCLOAK_ADMIN: admin
-#      KEYCLOAK_ADMIN_PASSWORD: admin
-#      KC_HTTP_PORT: 8090
-#    ports:
-#      - '8090:8090'
-#    volumes:
-#      - ./.kc_imports:/opt/keycloak/imports
-#    depends_on:
-#      - org_db_test
-#    command: start-dev
-##    networks:
-##      - sprinsg
-##      - kc_postgres
