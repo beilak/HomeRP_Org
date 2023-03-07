@@ -193,3 +193,5 @@ cython_debug/
 
 
 .db_volumes/
+
+.kc_imports/
