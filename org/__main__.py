@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError, StarletteHTTPException
 from org.route import user_router, unit_router
 from org.exceptions import valid_except_handler, http_except_handler
+from starlette_prometheus import metrics, PrometheusMiddleware
 
 
 ORG_APP: FastAPI
@@ -34,8 +35,11 @@ ORG_APP = FastAPI(
     root_path="/org",
 )
 
+ORG_APP.add_middleware(PrometheusMiddleware)
+
 ORG_APP.include_router(user_router, prefix=_API_PREFIX, tags=["Users"])
 ORG_APP.include_router(unit_router, prefix=_API_PREFIX, tags=["Units"])
+ORG_APP.add_route("/metrics", metrics)
 
 ORG_APP.add_exception_handler(RequestValidationError, valid_except_handler)
 ORG_APP.add_exception_handler(StarletteHTTPException, http_except_handler)
