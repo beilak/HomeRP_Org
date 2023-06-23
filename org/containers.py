@@ -3,6 +3,7 @@ from dependency_injector.providers import Configuration, Singleton, Factory
 from pydantic.env_settings import BaseSettings
 from org.controllers import UserRepository, UserService, UnitService, UnitRepository
 from org.db.db_conn import DBEngineProvider, ORGDatabase
+# from org.controllers.MqEvetnCnt import MqEventCnt
 
 
 class OrgContainer(containers.DeclarativeContainer):
@@ -41,9 +42,12 @@ class OrgContainer(containers.DeclarativeContainer):
         db_session=_org_db.provided.new_session,
     )
 
+    # _mq_event_cnt = MqEventCnt()
+
     unit_service: Factory[UnitService] = Factory(
         UnitService,
         repository=_unit_repository,
+        # event_cnt=_mq_event_cnt,
     )
 
     @staticmethod

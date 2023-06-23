@@ -14,6 +14,7 @@ ORG_APP: FastAPI
 async def service_startup() -> None:
     """ Init service """
     settings: Settings = Settings()
+    print(f" >>> {settings = }")
     container: Final[OrgContainer] = OrgContainer.create_container(settings)
     container.init_resources()
     ORG_APP.__container = container
@@ -32,7 +33,7 @@ ORG_APP = FastAPI(
     docs_url=f"{_API_PREFIX}/doc",
     on_startup=[service_startup],
     on_shutdown=[service_shutdown],
-    root_path="/org",
+    # root_path="/org",
 )
 
 ORG_APP.add_middleware(PrometheusMiddleware)

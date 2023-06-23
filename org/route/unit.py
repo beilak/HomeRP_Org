@@ -1,11 +1,12 @@
 """ Unit Route """
 
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Response
 from org.models import UnitResponseModel, UnitRequestModel
 from org.containers import OrgContainer
 from org.controllers import UnitService
 from typing import List
 from dependency_injector.wiring import inject, Provide
+from org.controllers.error import UnitExist
 
 unit_router: APIRouter = APIRouter()
 
@@ -17,12 +18,18 @@ unit_router: APIRouter = APIRouter()
 )
 @inject
 async def create_unit(
+        response: Response,
         unit: UnitRequestModel,
         unit_service: UnitService = Depends(Provide[OrgContainer.unit_service]),
 ):
     """Post unit"""
-    created_unit = await unit_service.create(unit)
-    return UnitResponseModel(**created_unit.__dict__)
+    try:
+        unit = await unit_service.create(unit)
+    except UnitExist:
+        response.status_code = 200
+        unit = await unit_service.get_unit(unit.unit_id)
+
+    return UnitResponseModel(**unit.__dict__)
 
 
 @unit_router.get(

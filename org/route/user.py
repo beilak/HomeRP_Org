@@ -1,11 +1,12 @@
 """ User Route """
 
-from fastapi import APIRouter, Depends, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException, Response
 from typing import List
 from dependency_injector.wiring import inject, Provide
 from org.containers import OrgContainer
 from org.models.user import UserResponseModel, UserRequestModel
 from org.controllers import UserService
+from org.controllers.error import UserExist
 
 
 user_router: APIRouter = APIRouter()
@@ -47,18 +48,24 @@ async def get_user(
 
 @user_router.post(
     "/user",
-    description="register new user ",
+    description="register new user",
     status_code=status.HTTP_201_CREATED,
     response_model=UserResponseModel
 )
 @inject
 async def create_user(
+        response: Response,
         user: UserRequestModel,
         user_service: UserService = Depends(Provide[OrgContainer.user_service]),
 ) -> UserResponseModel:
     """Posting new user"""
-    created_user = await user_service.create(user)
-    return UserResponseModel(**created_user.__dict__)
+    try:
+        user = await user_service.create(user)
+    except UserExist:
+        response.status_code = 200
+        user = await user_service.get_user(user.login)
+
+    return UserResponseModel(**user.__dict__)
 
 
 # @user_router.put(
