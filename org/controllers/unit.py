@@ -7,7 +7,7 @@ from org.db_schemas.db_unit import Unit
 from org.models import UnitRequestModel
 from org.controllers.error import UnitExist, UnitNotFoundError
 from sqlalchemy import select
-# from org.controllers.MqEvetnCnt import MqEventCnt
+from org.controllers.mq_event_cnt import MqEventCnt
 
 
 class UnitRepository:
@@ -63,18 +63,20 @@ class UnitService:
     def __init__(
             self,
             repository: UnitRepository,
-            # event_cnt: MqEventCnt,
+            event_cnt: MqEventCnt,
     ) -> None:
         """Init."""
         self._repository = repository
-        # self._event_cnt = event_cnt
+        self._event_cnt = event_cnt
 
     async def create(self, cr_unit: UnitRequestModel) -> Unit:
         """Create user"""
         if await self._repository.is_unit_exist(cr_unit.unit_id):
             raise UnitExist(cr_unit.unit_id)
-        new_unit = await self._repository.add(Unit(**cr_unit.dict()))
-        # self._event_cnt.new_unit_posted(new_unit)
+        new_unit = await self._repository.add(
+            Unit(**cr_unit.dict()),
+        )
+        await self._event_cnt.new_unit_posted(new_unit)
         return new_unit
 
     async def get_units(self, offset=0, limit=100):
