@@ -48,6 +48,7 @@ class OrgContainer(containers.DeclarativeContainer):
         mq_user=config.mq_user,
         mq_pwd=config.mq_pass,
         header_tech_info={"service": "org"},
+        mq_exchange=config.mq_exchange,
         routing_key=config.mq_routing_key,
     )
 

@@ -10,4 +10,5 @@ class Settings(BaseSettings):
     mq_host: str
     mq_user: str
     mq_pass: str
+    mq_exchange: str
     mq_routing_key: str

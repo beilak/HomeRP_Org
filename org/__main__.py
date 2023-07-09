@@ -32,7 +32,7 @@ ORG_APP = FastAPI(
     docs_url=f"{_API_PREFIX}/doc",
     on_startup=[service_startup],
     on_shutdown=[service_shutdown],
-    root_path="/org",
+    # root_path="/org",
 )
 
 ORG_APP.add_middleware(PrometheusMiddleware)
