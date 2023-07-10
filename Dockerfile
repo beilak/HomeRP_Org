@@ -11,4 +11,4 @@ RUN poetry env use python3 \
 
 COPY org org
 
-ENTRYPOINT ["poetry", "run", "uvicorn", "org.__main__:ORG_APP", "--host", "0.0.0.0", "--port", "8000", "--root-path", "/org"]
+ENTRYPOINT ["poetry", "run", "uvicorn", "org.__main__:ORG_APP", "--host", "0.0.0.0", "--port", "8000"]
