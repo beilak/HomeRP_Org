@@ -3,7 +3,7 @@ from .config import Settings
 from typing import Final
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError, StarletteHTTPException
-from org.route import user_router, unit_router
+from org.route import user_router, unit_router, checker_router
 from org.exceptions import valid_except_handler, http_except_handler
 from starlette_prometheus import metrics, PrometheusMiddleware
 
@@ -39,6 +39,7 @@ ORG_APP.add_middleware(PrometheusMiddleware)
 
 ORG_APP.include_router(user_router, prefix=_API_PREFIX, tags=["Users"])
 ORG_APP.include_router(unit_router, prefix=_API_PREFIX, tags=["Units"])
+ORG_APP.include_router(checker_router, prefix="/check", tags=["Check"])
 ORG_APP.add_route("/metrics", metrics)
 
 ORG_APP.add_exception_handler(RequestValidationError, valid_except_handler)

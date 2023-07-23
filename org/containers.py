@@ -4,12 +4,13 @@ from pydantic.env_settings import BaseSettings
 from org.controllers import UserRepository, UserService, UnitService, UnitRepository
 from org.db.db_conn import DBEngineProvider, ORGDatabase
 from org.controllers.mq_event_cnt import MqEventCnt
+from org.controllers.tech.tech import TechService
 
 
 class OrgContainer(containers.DeclarativeContainer):
     """Org. container"""
 
-    wiring_config = containers.WiringConfiguration(modules=[".route.user", ".route.unit"])
+    wiring_config = containers.WiringConfiguration(modules=[".route.user", ".route.unit", ".route.probes.healthchecks"])
 
     config: Configuration = Configuration()
 
@@ -56,6 +57,12 @@ class OrgContainer(containers.DeclarativeContainer):
         UnitService,
         repository=_unit_repository,
         event_cnt=_mq_event_cnt,
+    )
+
+    tech_service: Factory[TechService] = Factory(
+        TechService,
+        db_session=_org_db.provided.new_session,
+        mq_event_cnt=_mq_event_cnt,
     )
 
     @staticmethod

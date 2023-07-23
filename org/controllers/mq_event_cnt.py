@@ -49,3 +49,8 @@ class MqEventCnt:
                 "admin" : new_unit.admin,
             }
         )
+
+    async def check_conn(self) -> None:
+        """"Check connection. ToDo replace"""
+        async with await aio_pika.connect_robust(self._mq_dsn) as conn:
+            await conn.channel()
